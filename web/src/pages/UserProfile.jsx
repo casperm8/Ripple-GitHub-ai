@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 import { emitUserFollowed } from '../utils/socket'
+import { formatPlatformName } from '../utils/platform'
+import { getCurrentUser } from '../utils/auth'
 
 const UserProfile = () => {
   const { username } = useParams()
@@ -11,7 +13,7 @@ const UserProfile = () => {
   const [followError, setFollowError] = useState('')
   const [copiedCodeId, setCopiedCodeId] = useState(null)
 
-  const currentUser = JSON.parse(localStorage.getItem('user') || 'null')
+  const currentUser = getCurrentUser()
   const isOwnProfile = currentUser?.username === username
 
   const { data: profile, isLoading: profileLoading } = useQuery(

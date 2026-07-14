@@ -47,13 +47,22 @@ export const emitUserFollowed = (data) => {
 }
 
 export const onNewCode = (callback) => {
-  if (socket) socket.on('new-code', callback)
+  if (socket) {
+    socket.off('new-code')
+    socket.on('new-code', callback)
+  }
 }
 
 export const onFollowerNotification = (callback) => {
-  if (socket) socket.on('follower-notification', callback)
+  if (socket) {
+    socket.off('follower-notification')
+    socket.on('follower-notification', callback)
+  }
 }
 
 export const onUserStatus = (callback) => {
-  if (socket) socket.on('user-status', callback)
+  if (socket) {
+    socket.off('user-status')
+    socket.on('user-status', callback)
+  }
 }

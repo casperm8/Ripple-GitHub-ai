@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 import { emitCodeCreated, emitCodeUpdated } from '../utils/socket'
+import { formatPlatformName } from '../utils/platform'
+import { getCurrentUser } from '../utils/auth'
 
 const platforms = ['uber', 'airbnb', 'doordash', 'lyft', 'shopify', 'amazon', 'other']
 
@@ -23,7 +25,7 @@ const MyReferrals = () => {
   const [error, setError] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
 
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const user = getCurrentUser()
 
   const { data: codesData, isLoading } = useQuery(
     ['myCodes', user?.username],
@@ -96,7 +98,10 @@ const MyReferrals = () => {
     const payload = {
       ...formData,
       tags: formData.tags ? formData.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
-      usageLimit: formData.usageLimit ? parseInt(formData.usageLimit) : undefined,
+      usageLimit: (() => {
+        const parsed = parseInt(formData.usageLimit, 10)
+        return formData.usageLimit && !isNaN(parsed) ? parsed : undefined
+      })(),
       expiryDate: formData.expiryDate || undefined
     }
     if (editingCode) {
@@ -183,7 +188,7 @@ const MyReferrals = () => {
                 >
                   {platforms.map((p) => (
                     <option key={p} value={p}>
-                      {p.charAt(0).toUpperCase() + p.slice(1)}
+                      {formatPlatformName(p)}
                     </option>
                   ))}
                 </select>
