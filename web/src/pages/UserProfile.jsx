@@ -3,7 +3,6 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import axios from 'axios'
 import { emitUserFollowed } from '../utils/socket'
-import { formatPlatformName } from '../utils/platform'
 import { getCurrentUser } from '../utils/auth'
 
 const UserProfile = () => {
@@ -82,6 +81,9 @@ const UserProfile = () => {
   )
 
   const handleCopyCode = (code, id) => {
+    if (!navigator.clipboard) {
+      return
+    }
     navigator.clipboard.writeText(code).then(() => {
       setCopiedCodeId(id)
       setTimeout(() => setCopiedCodeId(null), 2000)

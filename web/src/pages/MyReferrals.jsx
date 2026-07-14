@@ -64,8 +64,10 @@ const MyReferrals = () => {
       onSuccess: (updatedCode) => {
         queryClient.invalidateQueries(['myCodes'])
         emitCodeUpdated(updatedCode)
+        setShowForm(false)
         setEditingCode(null)
         setFormData(emptyForm)
+        setError('')
       },
       onError: (err) => {
         setError(err.response?.data?.error || 'Failed to update code')
