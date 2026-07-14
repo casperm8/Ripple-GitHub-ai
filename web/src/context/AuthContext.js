@@ -16,7 +16,7 @@ const AuthContext = () => {
     if (storedToken && storedUser) {
       setToken(storedToken)
       setUser(JSON.parse(storedUser))
-      initializeSocket(JSON.parse(storedUser).id)
+      initializeSocket(storedToken)
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`
     }
     setLoading(false)
@@ -28,7 +28,7 @@ const AuthContext = () => {
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    initializeSocket(user.id)
+    initializeSocket(token)
   }
 
   const logout = () => {\n    setToken(null)\n    setUser(null)\n    localStorage.removeItem('token')\n    localStorage.removeItem('user')\n    delete axios.defaults.headers.common['Authorization']\n    navigate('/login')\n  }\n\n  return { user, token, loading, login, logout, isAuthenticated: !!token }\n}\n\nexport default AuthContext\n

@@ -6,6 +6,8 @@ const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Validation schema
 const codeSchema = Joi.object({
   code: Joi.string().required(),
@@ -58,10 +60,11 @@ router.get('/', async (req, res) => {
     const filter = { isActive: true };
     if (req.query.platform) filter.platform = req.query.platform;
     if (req.query.search) {
+      const escaped = escapeRegex(req.query.search);
       filter.$or = [
-        { description: { $regex: req.query.search, $options: 'i' } },
-        { code: { $regex: req.query.search, $options: 'i' } },
-        { tags: { $in: [new RegExp(req.query.search, 'i')] } }
+        { description: { $regex: escaped, $options: 'i' } },
+        { code: { $regex: escaped, $options: 'i' } },
+        { tags: { $in: [new RegExp(escaped, 'i')] } }
       ];
     }
 

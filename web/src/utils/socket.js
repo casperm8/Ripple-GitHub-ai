@@ -4,18 +4,19 @@ const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 let socket = null
 
-export const initializeSocket = (userId) => {
+export const initializeSocket = (token) => {
   if (socket) {
     socket.disconnect()
   }
 
   socket = io(SOCKET_URL, {
     transports: ['websocket'],
-    autoConnect: true
+    autoConnect: true,
+    auth: { token }
   })
 
   socket.on('connect', () => {
-    socket.emit('user-online', userId)
+    socket.emit('user-online')
   })
 
   socket.on('disconnect', () => {

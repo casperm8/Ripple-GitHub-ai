@@ -5,6 +5,8 @@ const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
 
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Get User Profile
 router.get('/:username', async (req, res) => {
   try {
@@ -175,11 +177,12 @@ router.put('/profile', authMiddleware, async (req, res) => {
 // Search Users
 router.get('/search/:query', async (req, res) => {
   try {
+    const escaped = escapeRegex(req.params.query);
     const users = await User.find({
       $or: [
-        { username: { $regex: req.params.query, $options: 'i' } },
-        { 'profile.firstName': { $regex: req.params.query, $options: 'i' } },
-        { 'profile.lastName': { $regex: req.params.query, $options: 'i' } }
+        { username: { $regex: escaped, $options: 'i' } },
+        { 'profile.firstName': { $regex: escaped, $options: 'i' } },
+        { 'profile.lastName': { $regex: escaped, $options: 'i' } }
       ]
     })
       .select('username profile codesCount followersCount')
