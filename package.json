@@ -1,0 +1,23 @@
+{
+  "name": "ripple-referral-app",
+  "version": "1.0.0",
+  "description": "Cross-platform referral and affiliate code sharing application",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "web",
+    "mobile",
+    "desktop"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w backend & npm run dev -w web",
+    "build": "npm run build -w backend && npm run build -w web && npm run build -w mobile && npm run build -w desktop",
+    "test": "npm run test -w backend && npm run test -w web && npm run test -w mobile",
+    "lint": "npm run lint -w backend && npm run lint -w web && npm run lint -w mobile && npm run lint -w desktop"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3"
+  }
+}
