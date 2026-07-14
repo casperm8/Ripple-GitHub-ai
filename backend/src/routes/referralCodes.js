@@ -4,6 +4,8 @@ const ReferralCode = require('../models/ReferralCode');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 
+const { escapeRegex } = require('../utils/regex');
+
 const router = express.Router();
 
 // Validation schema
@@ -58,10 +60,11 @@ router.get('/', async (req, res) => {
     const filter = { isActive: true };
     if (req.query.platform) filter.platform = req.query.platform;
     if (req.query.search) {
+      const escaped = escapeRegex(req.query.search);
       filter.$or = [
-        { description: { $regex: req.query.search, $options: 'i' } },
-        { code: { $regex: req.query.search, $options: 'i' } },
-        { tags: { $in: [new RegExp(req.query.search, 'i')] } }
+        { description: { $regex: escaped, $options: 'i' } },
+        { code: { $regex: escaped, $options: 'i' } },
+        { tags: { $in: [new RegExp(escaped, 'i')] } }
       ];
     }
 

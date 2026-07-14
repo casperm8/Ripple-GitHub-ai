@@ -7,6 +7,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const rateLimit = require('express-rate-limit');
 
+const jwt = require('jsonwebtoken');
 const authRoutes = require('./routes/auth');
 const referralCodeRoutes = require('./routes/referralCodes');
 const userRoutes = require('./routes/users');
@@ -47,11 +48,27 @@ app.use('/api/users', userRoutes);
 // Socket.io connection and real-time events
 const userSockets = new Map();
 
+// Require a valid JWT for every socket connection
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error('Authentication required'));
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.data.userId = decoded.userId;
+    next();
+  } catch (err) {
+    next(new Error('Invalid token'));
+  }
+});
+
 io.on('connection', (socket) => {
   console.log('New user connected:', socket.id);
 
-  // Store user socket
-  socket.on('user-online', (userId) => {
+  // Register the authenticated user's socket (userId comes from verified token)
+  socket.on('user-online', () => {
+    const userId = socket.data.userId;
     userSockets.set(userId, socket.id);
     io.emit('user-status', { userId, status: 'online' });
   });
@@ -66,12 +83,12 @@ io.on('connection', (socket) => {
     io.emit('code-changed', data);
   });
 
-  // Notify follow action
+  // Notify follow action — followerId is taken from the verified token, not client input
   socket.on('user-followed', (data) => {
     const targetSocket = userSockets.get(data.targetUserId);
     if (targetSocket) {
       io.to(targetSocket).emit('follower-notification', {
-        followerId: data.followerId,
+        followerId: socket.data.userId,
         followerName: data.followerName
       });
     }
@@ -89,11 +106,10 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
-    for (let [userId, socketId] of userSockets.entries()) {
-      if (socketId === socket.id) {
-        userSockets.delete(userId);
-        io.emit('user-status', { userId, status: 'offline' });
-      }
+    const userId = socket.data.userId;
+    if (userId && userSockets.get(userId) === socket.id) {
+      userSockets.delete(userId);
+      io.emit('user-status', { userId, status: 'offline' });
     }
   });
 });
