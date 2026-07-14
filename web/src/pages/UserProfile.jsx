@@ -9,6 +9,7 @@ const UserProfile = () => {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('codes')
   const [followError, setFollowError] = useState('')
+  const [copiedCodeId, setCopiedCodeId] = useState(null)
 
   const currentUser = JSON.parse(localStorage.getItem('user') || 'null')
   const isOwnProfile = currentUser?.username === username
@@ -78,9 +79,10 @@ const UserProfile = () => {
     }
   )
 
-  const handleCopyCode = (code) => {
+  const handleCopyCode = (code, id) => {
     navigator.clipboard.writeText(code)
-    alert('Code copied to clipboard!')
+    setCopiedCodeId(id)
+    setTimeout(() => setCopiedCodeId(null), 2000)
   }
 
   if (profileLoading) {
@@ -249,10 +251,10 @@ const UserProfile = () => {
                     )}
 
                     <button
-                      onClick={() => handleCopyCode(code.code)}
+                      onClick={() => handleCopyCode(code.code, code._id)}
                       className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm font-medium"
                     >
-                      Copy Code
+                      {copiedCodeId === code._id ? '✅ Copied!' : 'Copy Code'}
                     </button>
                   </div>
                 ))}
@@ -299,10 +301,10 @@ const UserProfile = () => {
                     </code>
 
                     <button
-                      onClick={() => handleCopyCode(code.code)}
+                      onClick={() => handleCopyCode(code.code, code._id)}
                       className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm font-medium"
                     >
-                      Copy Code
+                      {copiedCodeId === code._id ? '✅ Copied!' : 'Copy Code'}
                     </button>
                   </div>
                 ))}

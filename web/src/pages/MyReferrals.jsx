@@ -21,6 +21,7 @@ const MyReferrals = () => {
   const [editingCode, setEditingCode] = useState(null)
   const [formData, setFormData] = useState(emptyForm)
   const [error, setError] = useState('')
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
 
   const user = JSON.parse(localStorage.getItem('user') || 'null')
 
@@ -321,16 +322,32 @@ const MyReferrals = () => {
                   >
                     Edit
                   </button>
-                  <button
-                    onClick={() => {
-                      if (window.confirm('Delete this code?')) {
-                        deleteMutation.mutate(code._id)
-                      }
-                    }}
-                    className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 text-sm font-medium"
-                  >
-                    Delete
-                  </button>
+                  {confirmDeleteId === code._id ? (
+                    <div className="flex-1 flex gap-1">
+                      <button
+                        onClick={() => {
+                          deleteMutation.mutate(code._id)
+                          setConfirmDeleteId(null)
+                        }}
+                        className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 text-sm font-medium"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => setConfirmDeleteId(null)}
+                        className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 text-sm font-medium"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmDeleteId(code._id)}
+                      className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 text-sm font-medium"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

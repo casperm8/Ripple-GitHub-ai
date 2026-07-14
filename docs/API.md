@@ -2,7 +2,7 @@
 
 Base URL: `http://localhost:5000/api`
 
-All authenticated endpoints require an `Authorization: ****** header.
+All authenticated endpoints require an `Authorization: Bearer <token>` header.
 
 ---
 
