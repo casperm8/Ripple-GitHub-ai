@@ -3,9 +3,9 @@ const User = require('../models/User');
 const ReferralCode = require('../models/ReferralCode');
 const authMiddleware = require('../middleware/auth');
 
-const router = express.Router();
+const { escapeRegex } = require('../utils/regex');
 
-const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const router = express.Router();
 
 // Get User Profile
 router.get('/:username', async (req, res) => {

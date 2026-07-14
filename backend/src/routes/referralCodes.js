@@ -4,9 +4,9 @@ const ReferralCode = require('../models/ReferralCode');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 
-const router = express.Router();
+const { escapeRegex } = require('../utils/regex');
 
-const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const router = express.Router();
 
 // Validation schema
 const codeSchema = Joi.object({
