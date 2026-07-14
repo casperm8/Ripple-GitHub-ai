@@ -229,8 +229,9 @@ const MyReferrals = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Usage Limit</label>
+                <label htmlFor="usageLimit" className="block text-sm font-medium text-gray-700 mb-1">Usage Limit</label>
                 <input
+                  id="usageLimit"
                   type="number"
                   name="usageLimit"
                   value={formData.usageLimit}

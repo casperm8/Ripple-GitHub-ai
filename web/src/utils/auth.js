@@ -1,2 +1,7 @@
-export const getCurrentUser = () =>
-  JSON.parse(localStorage.getItem('user') || 'null')
+export const getCurrentUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem('user') || 'null')
+  } catch {
+    return null
+  }
+}

@@ -82,9 +82,12 @@ const UserProfile = () => {
   )
 
   const handleCopyCode = (code, id) => {
-    navigator.clipboard.writeText(code)
-    setCopiedCodeId(id)
-    setTimeout(() => setCopiedCodeId(null), 2000)
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiedCodeId(id)
+      setTimeout(() => setCopiedCodeId(null), 2000)
+    }).catch(() => {
+      setCopiedCodeId(null)
+    })
   }
 
   if (profileLoading) {
